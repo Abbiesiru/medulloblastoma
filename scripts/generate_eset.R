@@ -1,5 +1,5 @@
 library(NetBID2);
-
+setwd("/Users/abbiesiru/Desktop/research")
 tmp <- read.csv("01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv", check.names=FALSE, row.names = "gene_id");
 exp_mat <- as.matrix(tmp[,4:110]);
 feature_info <- tmp[,2:3];
@@ -7,8 +7,33 @@ feature_info <- tmp[,2:3];
 meta_data <- read.csv("manifest_source-data_RNA-Seq_MB_subset.csv", row.names = "sample_name")
 meta_data$X <- NULL
 
-eset <- generate.eset(
+net_eset <- generate.eset(
   exp_mat = exp_mat,
   phenotype_info = meta_data,
   feature_info = feature_info,
 )
+
+project_main_dir <- './software/NetBID2' # user defined main directory for the project, one main directory could have multiple project folders, distinguished by project name.
+current_date <- format(Sys.time(), "%Y-%m-%d") # optional, if user like to add current date to name the project folder
+project_name <- sprintf('project_%s',current_date) # project name for the project folders under main directory.
+
+analysis.par  <- NetBID.analysis.dir.create(project_main_dir=project_main_dir, project_name=project_name,
+                                            network_dir=network.dir, network_project_name=network.project.name)
+
+
+# If use the same expression dataset as in the network construction, just reload it directly
+load(sprintf('%s/DATA/network.par.Step.exp-QC.RData',network.dir)) # RData saved after QC in the network construction step
+analysis.par$cal.eset <- network.par$net.eset
+
+# Save Step 1 network.par as RData
+NetBID.saveRData(analysis.par=analysis.par,step='exp-QC')
+
+NetBID.loadRData(analysis.par=analysis.par,step='exp-QC')
+
+# Get network information
+analysis.par$tf.network  <- get.SJAracne.network(network_file=analysis.par$tf.network.file)
+analysis.par$sig.network <- get.SJAracne.network(network_file=analysis.par$sig.network.file)
+
+# Creat QC report for the network
+draw.network.QC(analysis.par$tf.network$igraph_obj,outdir=analysis.par$out.dir.QC,prefix='TF_net_',html_info_limit=FALSE)
+draw.network.QC(analysis.par$sig.network$igraph_obj,outdir=analysis.par$out.dir.QC,prefix='SIG_net_',html_info_limit=TRUE)
