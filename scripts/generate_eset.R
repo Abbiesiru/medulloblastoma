@@ -1,10 +1,10 @@
 library(NetBID2);
 setwd("/Users/abbiesiru/Desktop/research")
-tmp <- read.csv("01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv", check.names=FALSE, row.names = "gene_id");
+tmp <- read.csv("./medulloblastoma/dataset/01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv", check.names=FALSE, row.names = "gene_id");
 exp_mat <- as.matrix(tmp[,4:110]);
 feature_info <- tmp[,2:3];
 
-meta_data <- read.csv("manifest_source-data_RNA-Seq_MB_subset.csv", row.names = "sample_name")
+meta_data <- read.csv("./medulloblastoma/dataset/manifest_source-data_RNA-Seq_MB_subset.csv", row.names = "sample_name")
 meta_data$X <- NULL
 
 net_eset <- generate.eset(
@@ -17,10 +17,11 @@ project_main_dir <- './software/NetBID2' # user defined main directory for the p
 current_date <- format(Sys.time(), "%Y-%m-%d") # optional, if user like to add current date to name the project folder
 project_name <- sprintf('project_%s',current_date) # project name for the project folders under main directory.
 
-analysis.par  <- NetBID.analysis.dir.create(project_main_dir=project_main_dir, project_name=project_name,
-                                            network_dir=network.dir, network_project_name=network.project.name)
+network.par  <- NetBID.network.dir.create(project_main_dir=project_main_dir,project_name=project_name)
 
+network.par$net.eset <- net_eset
 
+draw.eset.QC(network.par$net.eset,outdir=network.par$out.dir.QC,intgroup=NULL,do.logtransform=FALSE,prefix='beforeQC_',emb_plot_type='2D.interactive')
 # If use the same expression dataset as in the network construction, just reload it directly
 load(sprintf('%s/DATA/network.par.Step.exp-QC.RData',network.dir)) # RData saved after QC in the network construction step
 analysis.par$cal.eset <- network.par$net.eset
