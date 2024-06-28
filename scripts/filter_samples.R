@@ -1,6 +1,6 @@
-# load the expression data matrix first into a variable called "X01_expressMatrix_geneLevel_RSEM_TPM" or something simpler
 readr::read_delim
 
+# read expression matrix file into R as a dataframe
 express_matrix <- read.csv("dataset/01_expressMatrix.geneLevel_RSEM_TPM.csv", check.names=FALSE);
 meta_data <- read_xlsx("dataset/manifest_source-data_RNA-Seq_MB.xlsx", col_names = TRUE);
 
@@ -14,6 +14,8 @@ for (i in colnames(express_matrix)){
 }
 colnames(express_matrix)
 
-# Save the filered data into a new file that can be loaded back into R as an ExpressionSet class object
+setwd("/Users/abbiesiru/Desktop/research/medulloblastoma/dataset")
+write.csv(express_matrix, "01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv")
+# Save the filtered data into a new file that can be loaded back into R as an ExpressionSet class object
 
                      
