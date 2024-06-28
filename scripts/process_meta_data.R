@@ -20,6 +20,10 @@ meta_data_MB <- meta_data_MB %>%
   dplyr::relocate(sample_name,.after = name)
 View(meta_data_MB)
 
+# Remove duplicates based on Sepal.Width columns
+meta_data_MB <- meta_data_MB[!duplicated(meta_data_MB$sample_name), ]
+
+write.csv(meta_data_MB, "manifest_source-data_RNA-Seq_MB.csv")
 install.packages("openxlsx")
 library(openxlsx)
 write.xlsx(meta_data_MB, 'manifest_source-data_RNA-Seq_MB.xlsx')
