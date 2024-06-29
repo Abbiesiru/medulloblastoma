@@ -1,8 +1,11 @@
 setwd("/Users/abbiesiru/Desktop/research/medulloblastoma/dataset")
 library(readxl);
+library(dplyr)
 
 # read expression matrix file into R as a dataframe
-express_matrix <- read.csv("01_expressMatrix.geneLevel_RSEM_TPM.csv", check.names=FALSE);
+tmp <- read.delim("01_expressMatrix.geneLevel_RSEM_TPM.txt", check.names=FALSE);
+express_matrix <- dplyr::filter(tmp, gene_type=="protein_coding")
+
 meta_data <- read_xlsx("manifest_source-data_RNA-Seq_MB.xlsx", col_names = TRUE);
 
 sample_name2 = as.list(meta_data$sample_name)
@@ -36,8 +39,8 @@ for (i in meta_data_idx){
 
 
 
-write.csv(express_matrix, "01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv")
-write.csv(meta_data_subset, "manifest_source-data_RNA-Seq_MB_subset.csv")
+write.csv(express_matrix, "01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv",row.names=FALSE)
+write.csv(meta_data_subset, "manifest_source-data_RNA-Seq_MB_subset.csv",row.names=FALSE)
 
 # Output the filtered meta data, where the row ordering is the same as the column ordering of the expression data
 

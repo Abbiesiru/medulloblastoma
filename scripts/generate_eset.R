@@ -1,11 +1,13 @@
 library(NetBID2);
-setwd("/Users/abbiesiru/Desktop/research")
-tmp <- read.csv("./medulloblastoma/dataset/01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv", check.names=FALSE, row.names = "gene_id");
-exp_mat <- as.matrix(tmp[,4:110]);
-feature_info <- tmp[,2:3];
 
-meta_data <- read.csv("./medulloblastoma/dataset/manifest_source-data_RNA-Seq_MB_subset.csv", row.names = "sample_name")
-meta_data$X <- NULL
+
+setwd("/Users/abbiesiru/Desktop/research/medulloblastoma/")
+
+tmp <- read.csv("dataset/01_expressMatrix.geneLevel_RSEM_TPM_filtered.csv", check.names=FALSE, row.names="gene_id");
+exp_mat <- as.matrix(tmp[,3:ncol(tmp)]);
+feature_info <- tmp[,1:2];
+
+meta_data <- read.csv("dataset/manifest_source-data_RNA-Seq_MB_subset.csv", row.names = "sample_name")
 
 net_eset <- generate.eset(
   exp_mat = exp_mat,
@@ -13,9 +15,8 @@ net_eset <- generate.eset(
   feature_info = feature_info,
 )
 
-project_main_dir <- './software/NetBID2' # user defined main directory for the project, one main directory could have multiple project folders, distinguished by project name.
-current_date <- format(Sys.time(), "%Y-%m-%d") # optional, if user like to add current date to name the project folder
-project_name <- sprintf('project_%s',current_date) # project name for the project folders under main directory.
+project_main_dir <- './' # user defined main directory for the project, one main directory could have multiple project folders, distinguished by project name.
+project_name <- 'project'
 
 network.par  <- NetBID.network.dir.create(project_main_dir=project_main_dir,project_name=project_name)
 
